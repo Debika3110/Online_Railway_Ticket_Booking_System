@@ -7,38 +7,97 @@ export default function LoginPage() {
   const [showSignupConfirmPassword, setShowSignupConfirmPassword] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
 
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+
+  const [signupName, setSignupName] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+  const [signupConfirmPassword, setSignupConfirmPassword] = useState("");
+  const [signupRole, setSignupRole] = useState("USER");
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const nameRegex = /^[A-Za-z\s]+$/; // Only letters and spaces
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (!emailRegex.test(loginEmail)) {
+      alert("Please enter a valid email");
+      return;
+    }
+    if (!loginPassword) {
+      alert("Please enter password");
+      return;
+    }
+    console.log("Login:", loginEmail, loginPassword);
+  };
+
+  const handleSignup = (e) => {
+    e.preventDefault();
+    if (!signupName || !nameRegex.test(signupName)) {
+      alert("Name must contain only letters and spaces");
+      return;
+    }
+    if (!emailRegex.test(signupEmail)) {
+      alert("Please enter a valid email");
+      return;
+    }
+    if (signupPassword.length < 6) {
+      alert("Password must be at least 6 characters");
+      return;
+    }
+    if (signupPassword !== signupConfirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    console.log("Signup:", signupName, signupEmail, signupPassword, signupRole);
+
+    // Reset form and go to login after signup
+    setSignupName("");
+    setSignupEmail("");
+    setSignupPassword("");
+    setSignupConfirmPassword("");
+    setSignupRole("USER");
+    setShowSignup(false);
+    alert("Registration successful! Please login.");
+  };
+
   return (
-    <div
-      className="h-screen w-screen flex items-center justify-center 
-      bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-800"
-    >
+    <div className="min-h-screen w-full flex items-center justify-center 
+      bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-800 p-4">
+      
       <div className={`flip-container ${showSignup ? "flipped" : ""}`}>
         
         {/* Login Side */}
-        <div className={`flip-side front w-[500px] bg-white/10 backdrop-blur-xl 
-        border border-white/20 shadow-2xl rounded-2xl p-8 ${showSignup ? "" : "active"}`}>
-          <h2 className="text-3xl font-extrabold text-center text-white mb-6">Login</h2>
-          <form>
+        <div className={`flip-side front max-w-lg w-full bg-white/10 backdrop-blur-xl 
+        border border-white/20 shadow-2xl rounded-2xl p-6 sm:p-8 ${showSignup ? "" : "active"}`}>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-center text-white mb-6">Login</h2>
+          <form onSubmit={handleLogin}>
             <div className="mb-4">
-              <label htmlFor="userID" className="block text-gray-200 text-sm font-medium mb-1">User ID</label>
+              <label htmlFor="loginEmail" className="block text-gray-200 text-sm font-medium mb-1">Email</label>
               <input
-                type="text"
-                id="userID"
-                name="userID"
+                type="email"
+                id="loginEmail"
+                name="loginEmail"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
                 className="w-full px-4 py-2 rounded-lg bg-white/10 text-white placeholder-gray-400 
                 border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                placeholder="Your ID"
+                placeholder="your@email.com"
                 required
               />
             </div>
 
             <div className="mb-6">
-              <label htmlFor="password" className="block text-gray-200 text-sm font-medium mb-1">Password</label>
+              <label htmlFor="loginPassword" className="block text-gray-200 text-sm font-medium mb-1">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  id="password"
-                  name="password"
+                  id="loginPassword"
+                  name="loginPassword"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg bg-white/10 text-white placeholder-gray-400 
                   border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-400 pr-16"
                   placeholder="••••••••"
@@ -75,16 +134,17 @@ export default function LoginPage() {
         </div>
 
         {/* Signup Side */}
-        <div className={`flip-side back w-[500px] bg-white/10 backdrop-blur-xl 
-        border border-white/20 shadow-2xl rounded-2xl p-8 ${showSignup ? "active" : ""}`}>
-          <h2 className="text-3xl font-extrabold text-center text-white mb-6">Sign Up</h2>
-          <form>
+        <div className={`flip-side back max-w-lg w-full bg-white/10 backdrop-blur-xl 
+        border border-white/20 shadow-2xl rounded-2xl p-6 sm:p-8 ${showSignup ? "active" : ""}`}>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-center text-white mb-6">Sign Up</h2>
+          <form onSubmit={handleSignup}>
             <div className="mb-4">
-              <label htmlFor="userName" className="block text-gray-200 text-sm font-medium mb-1">User Name</label>
+              <label htmlFor="signupName" className="block text-gray-200 text-sm font-medium mb-1">Name</label>
               <input
                 type="text"
-                id="userName"
-                name="userName"
+                id="signupName"
+                value={signupName}
+                onChange={(e) => setSignupName(e.target.value)}
                 className="w-full px-4 py-2 rounded-lg bg-white/10 text-white placeholder-gray-400 
                 border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 placeholder="Your Name"
@@ -93,14 +153,15 @@ export default function LoginPage() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="signupUserID" className="block text-gray-200 text-sm font-medium mb-1">User ID</label>
+              <label htmlFor="signupEmail" className="block text-gray-200 text-sm font-medium mb-1">Email</label>
               <input
-                type="text"
-                id="signupUserID"
-                name="userID"
+                type="email"
+                id="signupEmail"
+                value={signupEmail}
+                onChange={(e) => setSignupEmail(e.target.value)}
                 className="w-full px-4 py-2 rounded-lg bg-white/10 text-white placeholder-gray-400 
                 border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                placeholder="ID123"
+                placeholder="your@email.com"
                 required
               />
             </div>
@@ -111,7 +172,8 @@ export default function LoginPage() {
                 <input
                   type={showSignupPassword ? "text" : "password"}
                   id="signupPassword"
-                  name="password"
+                  value={signupPassword}
+                  onChange={(e) => setSignupPassword(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg bg-white/10 text-white placeholder-gray-400 
                   border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-400 pr-16"
                   placeholder="••••••••"
@@ -129,12 +191,13 @@ export default function LoginPage() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="confirmPassword" className="block text-gray-200 text-sm font-medium mb-1">Confirm Password</label>
+              <label htmlFor="signupConfirmPassword" className="block text-gray-200 text-sm font-medium mb-1">Confirm Password</label>
               <div className="relative">
                 <input
                   type={showSignupConfirmPassword ? "text" : "password"}
-                  id="confirmPassword"
-                  name="confirmPassword"
+                  id="signupConfirmPassword"
+                  value={signupConfirmPassword}
+                  onChange={(e) => setSignupConfirmPassword(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg bg-white/10 text-white placeholder-gray-400 
                   border border-white/20 focus:outline-none focus:ring-2 focus:ring-indigo-400 pr-16"
                   placeholder="••••••••"
@@ -154,7 +217,8 @@ export default function LoginPage() {
               <label htmlFor="role" className="block text-gray-200 text-sm font-medium mb-1">Role</label>
               <select
                 id="role"
-                name="role"
+                value={signupRole}
+                onChange={(e) => setSignupRole(e.target.value)}
                 className="w-full px-4 py-2 rounded-lg bg-white/10 text-gray-900 border border-white/20 
                 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 required
